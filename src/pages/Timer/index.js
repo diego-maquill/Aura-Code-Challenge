@@ -1,6 +1,6 @@
 // Globals
 import "./styles.scss";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Components
 import { Button } from "components/Button";
@@ -16,38 +16,49 @@ function Expired() {
 }
 
 // Component
-//fuction Timer(){
-function Timer(time) {
+function Timer() {
   // Hooks - state
-  //const [counter, setCounter] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(time);
-  const [countDownShow, setcountDownShow] = useState(false);
+  const [counter, setCounter] = useState(0);
+  const [isRunning, setIsRunning] = useState(false)
+  const [secondReader, setSecondReader] = useState('00');
+  const [minuteReader, setMinuteReader] = useState('0'); //m:ss
+
+  const defaultCountDown = 60;
 
   // TODO: implement counter...
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeLeft(value => value - 1);
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    }
-  }, []);
-
-  const outputTimeStamp = timeValue => {
-    let minutes = timeValue >= 60 ? Math.floor(timeValue / 60) : 0;
-    let seconds = timeValue % 60;
-    if (seconds < 10) {
-      seconds = `0${seconds}`;
-    }
-    return timeValue > 0 ? `Time left - ${minutes}:${seconds}` : (<div>
-      <p>Click Reset above to stop the alarm</p>
-      <span>{outputTimeStamp(timeLeft)}</span>
-      {/*     <audio src="./alarm.mp3" autoPlay loop></audio> */}
-    </div>);
+  const startTimer = () => {
+    setIsRunning(true);
+    setCounter(defaultCountDown);
   }
 
+  const resetTimer = () => {
+    setIsRunning(true);
+    setCounter(defaultCountDown);
+  }
 
+  useEffect(() => {
+    let interval;
+    if (isRunning) {
+      interval = setInterval(() => {
+        const sCounter = counter % 60;
+        const mCounter = Math.floor(counter / 60);
+        // I cast my previous variables to handle the length of seconds and minutes
+        const secString = String(sCounter).length === 1 ? `0${sCounter}` : sCounter;
+        const mString = String(mCounter).length === 1 ? `0${mCounter}` : mCounter;
+
+        setSecondReader(secString);
+        setMinuteReader(mString);
+        // set my counterdown interval update by -1 
+        setCounter(counter => counter - 1);
+        //stop conter else timing is 1 second
+        if (counter <= 0) {
+          setIsRunning(false)
+        }
+      }, 1000);
+    }
+
+    return () => clearInterval(interval)
+  }, [isRunning, counter])// my useEffect second argument will run only if isRunning and counter change
 
   // Render
   return (
@@ -55,12 +66,12 @@ function Timer(time) {
       <h1>Timer</h1>
 
       <div className="aura-page-content">
-        <div className="aura-timer-clock">0:00</div>
-        {counter <= 0 ? <Expired /> : null}
+        <div className="aura-timer-clock">{minuteReader}:{secondReader}</div>
+        {!isRunning ? <Expired /> : null}
 
         <div className="aura-timer-buttons">
-          <Button>Start</Button>
-          <Button type="submit">Reset</Button>
+          <Button onClick={() => startTimer()}>Start</Button>
+          <Button onClick={() => resetTimer()}>Reset</Button>
         </div>
       </div>
     </div>

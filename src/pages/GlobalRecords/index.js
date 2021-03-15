@@ -1,23 +1,32 @@
 // Globals
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 // Components
-import { Record } from "components/Record";
-
-// Misc
-import { data } from "components/Record/data";
+import { mockFetch } from "../../util/mockFetch";
+import Records from "./Records";
+import RecordContext from "./RecordContext";
 
 // Component
 function GlobalRecords() {
+  //setup Global useState Hook
+  const [data, setData] = useState([]);
+  //declare async function for fetching thru the mockFetch method
+  const fetchSaveData = async () => {
+    const recordData = await mockFetch();
+    setData(recordData);
+  }
+  // useEffect hook for fetching SavaData
+  useEffect(() => {
+    fetchSaveData();
+  }, [])
+
   return (
     <div className="aura-page aura-global_records">
       <h1>Top Records of 2020</h1>
-
-      <div className="aura-page-content">
-        {data.map((record) => {
-          return <Record key={record.id} data={record} />;
-        })}
-      </div>
+      {/* I chose to use React Context for stage management*/}
+      <RecordContext.Provider value={data}>
+        <Records />
+      </RecordContext.Provider>
     </div>
   );
 }

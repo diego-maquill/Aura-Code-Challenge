@@ -64,6 +64,12 @@ After you submit the completed project we will schedule a follow-up code review.
 - Details matter but you should strive to deliver complete features.
 - Consider how you can prove that both features work as intended.
 
+## Submitting your work
+
+- Commit changes as you normally would on a feature branch.
+- Push to GitHub or another git service. If you create a private GitHub repo please add "okanthony" as a viewer.
+- Share the repository link with us.
+
 ## Package Scripts
 
 | command              | description                     |
